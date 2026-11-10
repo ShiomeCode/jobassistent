@@ -1,0 +1,21 @@
+{
+  "name": "jobassistent",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Write targeted job applications from your own statement bank – no AI costs, all data stays in your browser.",
+  "license": "MIT",
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "dev": "npm run dev -w @jobassistent/web",
+    "build": "npm run build -w @jobassistent/web",
+    "test": "npm run test -w @jobassistent/core",
+    "typecheck": "npm run typecheck --workspaces --if-present"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
