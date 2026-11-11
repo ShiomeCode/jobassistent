@@ -7,6 +7,7 @@ import { deleteExperience, deleteStatement, saveExperience, saveStatement } from
 import { StatementCard } from "../components/StatementCard";
 import { StatementForm } from "../components/StatementForm";
 import { ExperienceList } from "../components/ExperienceList";
+import { ProfileForm } from "../components/ProfileForm";
 import { t, tDynamic } from "../texts";
 
 const TYPE_ORDER: StatementType[] = ["result", "skill", "personality", "motivation"];
@@ -79,6 +80,7 @@ export function BankPage() {
 
         <aside className="bank-page__sidebar">
           <ExperienceList experiences={experiences} onSave={saveExperience} onDelete={deleteExperience} />
+          <ProfileForm />
         </aside>
       </div>
     </div>

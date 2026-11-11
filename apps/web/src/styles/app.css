@@ -143,6 +143,7 @@ a {
 
 .app-header__nav a {
   display: block;
+  white-space: nowrap;
   padding: var(--space-2) var(--space-3);
   border-radius: var(--radius-control);
   color: var(--ink-soft);
@@ -860,6 +861,17 @@ fieldset {
 }
 
 @media (max-width: 30rem) {
+  .app-header nav {
+    width: 100%;
+    overflow-x: auto;
+    margin-inline: calc(-1 * var(--space-2));
+  }
+
+  .app-header__nav a {
+    padding-inline: var(--space-2);
+    font-size: 0.9375rem;
+  }
+
   .app-main {
     padding-inline: var(--space-4);
   }
@@ -878,5 +890,242 @@ fieldset {
   * {
     scroll-behavior: auto !important;
     transition: none !important;
+  }
+}
+
+/* Contact details in the bank sidebar */
+
+.bank-page__sidebar {
+  display: grid;
+  gap: var(--space-7);
+  align-content: start;
+}
+
+.profile-form {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.profile-form__fields {
+  display: grid;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.profile-form__fields .button {
+  justify-self: start;
+}
+
+input[type="email"],
+input[type="tel"] {
+  font: inherit;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius-control);
+  padding: var(--space-2) var(--space-3);
+  width: 100%;
+}
+
+.form__success {
+  color: var(--covered);
+  font-weight: 600;
+  font-size: 0.875rem;
+}
+
+/* Saving and exporting in the letter */
+
+.letter__top {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: var(--space-3);
+}
+
+.save-state {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.save-state::before {
+  content: "";
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  border: 2px solid var(--line-strong);
+}
+
+.save-state.is-saved {
+  color: var(--covered);
+}
+
+.save-state.is-saved::before {
+  border-color: var(--covered);
+  background: var(--covered);
+}
+
+.letter__title input {
+  font-family: var(--font-letter);
+  font-size: 1.125rem;
+  font-weight: 600;
+}
+
+.letter__export {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--paper);
+  border-radius: var(--radius-card);
+}
+
+.letter__export-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* Saved applications */
+
+.applications-page__toolbar {
+  margin-bottom: var(--space-5);
+}
+
+.applications-page__warning {
+  margin-bottom: var(--space-5);
+  max-width: 48rem;
+}
+
+.application-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-3);
+  max-width: 56rem;
+}
+
+.application-list__item {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-card);
+}
+
+.application-list__body {
+  flex: 1 1 22rem;
+  display: grid;
+  gap: var(--space-1);
+}
+
+.application-list__title {
+  font-family: var(--font-letter);
+  font-weight: 600;
+  font-size: 1.125rem;
+}
+
+.application-list__meta {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: center;
+}
+
+.application-list__badge {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 1px var(--space-2);
+  border-radius: 999px;
+  background: var(--marker);
+  color: var(--ink);
+}
+
+.application-list__preview {
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.application-list__actions {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+/* Printing: only the letter is printed, laid out like a real letter. */
+
+.printable-letter {
+  display: none;
+}
+
+@media print {
+  @page {
+    margin: 2.2cm 2.5cm;
+  }
+
+  body {
+    background: #fff;
+  }
+
+  .app-header,
+  .app-footer,
+  .page__intro,
+  .application-page__layout {
+    display: none;
+  }
+
+  .app-main {
+    padding: 0;
+    max-width: none;
+  }
+
+  .printable-letter {
+    display: block;
+    font-family: var(--font-letter);
+    font-size: 11pt;
+    line-height: 1.6;
+    color: #000;
+  }
+
+  .printable-letter__sender,
+  .printable-letter__sign-off {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .printable-letter__sender {
+    margin-bottom: 1.5em;
+  }
+
+  .printable-letter__date {
+    text-align: right;
+    margin-bottom: 2em;
+  }
+
+  .printable-letter__heading {
+    font-family: var(--font-letter);
+    font-size: 14pt;
+    font-weight: 600;
+    margin-bottom: 1.2em;
+  }
+
+  .printable-letter__paragraph {
+    margin-bottom: 0.9em;
+    orphans: 3;
+    widows: 3;
+  }
+
+  .printable-letter__sign-off {
+    margin-top: 1.6em;
+    break-inside: avoid;
   }
 }

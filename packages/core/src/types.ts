@@ -1,6 +1,14 @@
 // Shared data model for jobassistent.
 // All data lives in the user's browser; these types describe what is stored and exported.
 
+/** The user's own contact details, shown at the top of exported applications. */
+export interface Profile {
+  name: string;
+  email?: string;
+  phone?: string;
+  address?: string;
+}
+
 export type ExperienceKind = "job" | "education" | "volunteer" | "other";
 
 /** A job, education or other experience that statements can be tied to. */

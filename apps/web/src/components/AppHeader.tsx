@@ -6,6 +6,7 @@ import { t, type TextKey } from "../texts";
 const NAV_ITEMS: { route: Route; labelKey: TextKey }[] = [
   { route: "bank", labelKey: "nav.bank" },
   { route: "application", labelKey: "nav.application" },
+  { route: "applications", labelKey: "nav.applications" },
   { route: "backup", labelKey: "nav.backup" },
 ];
 

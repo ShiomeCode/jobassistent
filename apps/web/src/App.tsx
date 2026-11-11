@@ -3,6 +3,7 @@ import { useApplicationDraft } from "./hooks/useApplicationDraft";
 import { AppHeader } from "./components/AppHeader";
 import { BankPage } from "./pages/BankPage";
 import { ApplicationPage } from "./pages/ApplicationPage";
+import { ApplicationsPage } from "./pages/ApplicationsPage";
 import { BackupPage } from "./pages/BackupPage";
 import { t } from "./texts";
 
@@ -16,6 +17,7 @@ export function App() {
       <main className="app-main">
         {route === "bank" && <BankPage />}
         {route === "application" && <ApplicationPage draft={applicationDraft} />}
+        {route === "applications" && <ApplicationsPage draft={applicationDraft} />}
         {route === "backup" && <BackupPage />}
       </main>
       <footer className="app-footer">

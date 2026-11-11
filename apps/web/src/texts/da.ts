@@ -8,7 +8,8 @@ export const da = {
 
   "nav.label": "Hovedmenu",
   "nav.bank": "Min bank",
-  "nav.application": "Ny ansøgning",
+  "nav.application": "Ansøgning",
+  "nav.applications": "Mine ansøgninger",
   "nav.backup": "Backup",
 
   "common.save": "Gem",
@@ -65,6 +66,19 @@ export const da = {
   "experienceKind.other": "Andet",
 
   "application.heading": "Ny ansøgning",
+  "application.editHeading": "Redigér ansøgning",
+  "application.title": "Overskrift",
+  "application.titlePlaceholder": "Fx: Ansøgning som frontendudvikler",
+  "application.save": "Gem ansøgning",
+  "application.saved": "Gemt",
+  "application.unsaved": "Ikke gemt",
+  "application.exportHeading": "Hent eller del",
+  "application.copyBody": "Kopiér brødtekst",
+  "application.downloadDocx": "Hent som Word",
+  "application.print": "Udskriv eller gem som PDF",
+  "application.downloadText": "Hent som tekstfil",
+  "application.docxFailed": "Word-filen kunne ikke laves. Prøv igen, eller hent ansøgningen som tekstfil.",
+  "application.profileMissing": "Tilføj dine kontaktoplysninger under Min bank, så de kommer med øverst i ansøgningen.",
   "application.postingLabel": "Jobopslag",
   "application.postingHint": "Indsæt teksten fra jobopslaget. Ord, der matcher din bank, bliver markeret.",
   "application.findMatches": "Find match",
@@ -82,11 +96,31 @@ export const da = {
   "application.remove": "Fjern",
   "application.matchedOn": "Match på: {words}",
   "application.noDirectMatch": "Intet direkte match i opslaget",
-  "application.copy": "Kopiér tekst",
-  "application.copied": "Tekst kopieret",
-  "application.download": "Hent som tekstfil",
-  "application.reset": "Start forfra",
+  "application.copied": "Brødtekst kopieret",
+  "application.newApplication": "Ny ansøgning",
   "application.slotFull": "Pladsen er fuld. Fjern en sætning for at tilføje en anden.",
+
+  "applications.heading": "Mine ansøgninger",
+  "applications.intro": "Ansøgninger, du har gemt. Åbn en for at rette i den eller hente den igen.",
+  "applications.empty": "Du har ingen gemte ansøgninger endnu. Skriv en under Ansøgning og klik Gem ansøgning.",
+  "applications.untitled": "Uden overskrift",
+  "applications.updated": "Senest ændret {date}",
+  "applications.open": "Åbn",
+  "applications.isOpen": "Åben nu",
+  "applications.unsavedWarning": "Ansøgningen, du arbejder på, har ændringer, der ikke er gemt. Åbner du en anden, forsvinder ændringerne.",
+  "applications.backToDraft": "Gå tilbage og gem",
+
+  "profile.heading": "Dine kontaktoplysninger",
+  "profile.intro": "Kommer med øverst i de ansøgninger, du henter.",
+  "profile.name": "Navn",
+  "profile.email": "E-mail",
+  "profile.phone": "Telefon",
+  "profile.address": "Adresse",
+  "profile.save": "Gem oplysninger",
+  "profile.saved": "Oplysningerne er gemt.",
+  "profile.nameRequired": "Skriv dit navn, før du gemmer.",
+
+  "letter.signOff": "Med venlig hilsen",
 
   "section.expectations": "Krav",
   "section.tasks": "Opgaver",
@@ -115,6 +149,7 @@ export const da = {
   "backup.error.invalidExperiences": "Backuppen indeholder ugyldige erfaringer og blev ikke indlæst.",
   "backup.error.invalidStatements": "Backuppen indeholder ugyldige sætninger og blev ikke indlæst.",
   "backup.error.invalidApplications": "Backuppen indeholder ugyldige ansøgninger og blev ikke indlæst.",
+  "backup.error.invalidProfile": "Backuppen indeholder ugyldige kontaktoplysninger og blev ikke indlæst.",
 } as const;
 
 export type TextKey = keyof typeof da;

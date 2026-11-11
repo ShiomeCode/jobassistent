@@ -1,55 +1,104 @@
-// Write an application: paste a posting, see matches and coverage, and compose the letter.
+// Write an application: paste a posting, see matches and coverage, compose the letter, then save or export it.
 
 import { useState } from "react";
-import { composeApplicationText } from "@jobassistent/core";
+import { buildLetter, composeApplicationParagraphs, formatLetterAsText } from "@jobassistent/core";
 import { useStatementBank } from "../hooks/useStatementBank";
+import { useProfile } from "../hooks/useProfile";
 import { useMatching } from "../hooks/useMatching";
 import type { ApplicationDraft } from "../hooks/useApplicationDraft";
 import { PostingPanel } from "../components/PostingPanel";
 import { SlotEditor } from "../components/SlotEditor";
-import { db } from "../db";
-import { downloadFile, getDateStamp } from "../utils/download";
+import { PrintableLetter } from "../components/PrintableLetter";
+import { createId, markStatementsAsUsed, saveApplication } from "../db";
+import { createFileSlug, downloadFile, getDateStamp } from "../utils/download";
+import { exportLetterAsDocx } from "../utils/exportDocx";
 import { getRouteHref } from "../hooks/useHashRoute";
-import { t } from "../texts";
+import { formatLongDate, t } from "../texts";
 
 interface ApplicationPageProps {
   draft: ApplicationDraft;
 }
 
-const COPIED_MESSAGE_DURATION_MS = 2500;
+type ActionStatus = "idle" | "copied" | "docxFailed";
+
+const STATUS_MESSAGE_DURATION_MS = 2500;
+const MAX_SUGGESTED_TITLE_LENGTH = 80;
+
+/** Uses the first line of the posting (usually the job title) as a starting point for the heading. */
+function suggestTitle(postingText: string): string {
+  const firstLine = postingText.split(/\r?\n/).find(line => line.trim().length > 0)?.trim() ?? "";
+  return firstLine.slice(0, MAX_SUGGESTED_TITLE_LENGTH);
+}
 
 // Used on page: App (route "application")
 export function ApplicationPage({ draft }: ApplicationPageProps) {
   const { statements, isLoading } = useStatementBank();
+  const { profile, isLoading: isProfileLoading } = useProfile();
   const matching = useMatching(draft.matchedPostingText, statements, draft.template);
-  const [isCopied, setIsCopied] = useState(false);
+  const [actionStatus, setActionStatus] = useState<ActionStatus>("idle");
 
   const statementsById = new Map(statements.map(statement => [statement.id, statement]));
-  const applicationText = composeApplicationText(draft.template, draft.slotContents, statements);
-  const hasText = applicationText.length > 0;
+  const paragraphs = composeApplicationParagraphs(draft.template, draft.slotContents, statements);
+  const letter = buildLetter({
+    profile,
+    heading: draft.title,
+    paragraphs,
+    dateLine: formatLongDate(new Date()),
+    signOff: t("letter.signOff"),
+  });
+  const hasText = paragraphs.length > 0;
+  const fileNameBase = `${createFileSlug(draft.title) || "ansoegning"}-${getDateStamp()}`;
+  const isSaved = !draft.isDirty && draft.applicationId !== undefined;
+  const usedStatementIds = Object.values(draft.slotContents).flatMap(content => content.statementIds);
 
-  const markStatementsAsUsed = async () => {
-    const usedIds = Object.values(draft.slotContents).flatMap(content => content.statementIds);
-    const now = new Date().toISOString();
-    await db.statements.bulkUpdate(usedIds.map(statementId => ({ key: statementId, changes: { lastUsed: now } })));
+  const showStatus = (status: ActionStatus) => {
+    setActionStatus(status);
+    window.setTimeout(() => setActionStatus("idle"), STATUS_MESSAGE_DURATION_MS);
   };
 
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(applicationText);
-    await markStatementsAsUsed();
-    setIsCopied(true);
-    window.setTimeout(() => setIsCopied(false), COPIED_MESSAGE_DURATION_MS);
+  const handleFindMatches = () => {
+    if (draft.title.trim().length === 0) {
+      draft.setTitle(suggestTitle(draft.postingText));
+    }
+    draft.findMatches();
   };
 
-  const handleDownload = async () => {
-    downloadFile(`ansoegning-${getDateStamp()}.txt`, applicationText, "text/plain;charset=utf-8");
-    await markStatementsAsUsed();
+  const handleSave = async () => {
+    const application = draft.toApplication(createId);
+    await saveApplication(application);
+    await markStatementsAsUsed(usedStatementIds);
+    draft.markSaved(application);
+  };
+
+  const handleCopyBody = async () => {
+    await navigator.clipboard.writeText(paragraphs.join("\n\n"));
+    await markStatementsAsUsed(usedStatementIds);
+    showStatus("copied");
+  };
+
+  const handleDownloadDocx = async () => {
+    try {
+      await exportLetterAsDocx(letter, `${fileNameBase}.docx`);
+      await markStatementsAsUsed(usedStatementIds);
+    } catch {
+      showStatus("docxFailed");
+    }
+  };
+
+  const handlePrint = async () => {
+    await markStatementsAsUsed(usedStatementIds);
+    window.print();
+  };
+
+  const handleDownloadText = async () => {
+    downloadFile(`${fileNameBase}.txt`, formatLetterAsText(letter), "text/plain;charset=utf-8");
+    await markStatementsAsUsed(usedStatementIds);
   };
 
   return (
     <div className="page application-page">
       <div className="page__intro">
-        <h1>{t("application.heading")}</h1>
+        <h1>{t(draft.applicationId ? "application.editHeading" : "application.heading")}</h1>
         {!isLoading && statements.length === 0 && (
           <p className="notice">
             <a href={getRouteHref("bank")}>{t("application.emptyBank")}</a>
@@ -63,19 +112,42 @@ export function ApplicationPage({ draft }: ApplicationPageProps) {
           matchedPostingText={draft.matchedPostingText}
           matching={matching}
           onPostingTextChange={draft.setPostingText}
-          onFindMatches={draft.findMatches}
+          onFindMatches={handleFindMatches}
           onEditPosting={draft.editPosting}
         />
 
         <section className="letter" aria-labelledby="letter-heading">
-          <h2 id="letter-heading" className="letter__heading">
-            {t("application.letterHeading")}
-          </h2>
+          <div className="letter__top">
+            <h2 id="letter-heading" className="letter__heading">
+              {t("application.letterHeading")}
+            </h2>
+            {matching !== undefined && (
+              <span className={isSaved ? "save-state is-saved" : "save-state"}>
+                {isSaved ? t("application.saved") : t("application.unsaved")}
+              </span>
+            )}
+          </div>
 
           {matching === undefined ? (
             <p className="muted">{t("application.letterEmpty")}</p>
           ) : (
             <>
+              {!isProfileLoading && !profile && (
+                <p className="notice">
+                  <a href={getRouteHref("bank")}>{t("application.profileMissing")}</a>
+                </p>
+              )}
+
+              <label className="field letter__title">
+                <span className="field__label">{t("application.title")}</span>
+                <input
+                  type="text"
+                  value={draft.title}
+                  placeholder={t("application.titlePlaceholder")}
+                  onChange={event => draft.setTitle(event.target.value)}
+                />
+              </label>
+
               {draft.template.slots.map(slot => (
                 <SlotEditor
                   key={slot.id}
@@ -90,23 +162,41 @@ export function ApplicationPage({ draft }: ApplicationPageProps) {
               ))}
 
               <div className="letter__actions">
-                <button type="button" className="button button--primary" disabled={!hasText} onClick={handleCopy}>
-                  {t("application.copy")}
-                </button>
-                <button type="button" className="button button--secondary" disabled={!hasText} onClick={handleDownload}>
-                  {t("application.download")}
+                <button type="button" className="button button--primary" disabled={!draft.isDirty} onClick={handleSave}>
+                  {t("application.save")}
                 </button>
                 <button type="button" className="button button--quiet" onClick={draft.reset}>
-                  {t("application.reset")}
+                  {t("application.newApplication")}
                 </button>
-                <span className="letter__status" role="status">
-                  {isCopied ? t("application.copied") : ""}
-                </span>
+              </div>
+
+              <div className="letter__export" role="group" aria-labelledby="export-heading">
+                <h3 id="export-heading">{t("application.exportHeading")}</h3>
+                <div className="letter__export-buttons">
+                  <button type="button" className="button button--secondary" disabled={!hasText} onClick={handleDownloadDocx}>
+                    {t("application.downloadDocx")}
+                  </button>
+                  <button type="button" className="button button--secondary" disabled={!hasText} onClick={handlePrint}>
+                    {t("application.print")}
+                  </button>
+                  <button type="button" className="button button--secondary" disabled={!hasText} onClick={handleCopyBody}>
+                    {t("application.copyBody")}
+                  </button>
+                  <button type="button" className="button button--quiet" disabled={!hasText} onClick={handleDownloadText}>
+                    {t("application.downloadText")}
+                  </button>
+                </div>
+                <p role="status" className={actionStatus === "docxFailed" ? "field__error" : "letter__status"}>
+                  {actionStatus === "copied" && t("application.copied")}
+                  {actionStatus === "docxFailed" && t("application.docxFailed")}
+                </p>
               </div>
             </>
           )}
         </section>
       </div>
+
+      <PrintableLetter letter={letter} />
     </div>
   );
 }

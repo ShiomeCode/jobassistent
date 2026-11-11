@@ -38,7 +38,8 @@ export function SlotEditor({
   const headingId = `slot-${slot.id}-heading`;
   const openSuggestions = suggestions.filter(suggestion => !content.statementIds.includes(suggestion.statementId));
   const isFull = content.statementIds.length >= slot.maxStatements;
-  const acceptsStatements = slot.maxStatements > 0;
+  // Hide the suggestion box once every suggestion has been used, so it does not show up empty.
+  const showsSuggestions = slot.maxStatements > 0 && (openSuggestions.length > 0 || content.statementIds.length === 0);
 
   return (
     <section className="slot" aria-labelledby={headingId}>
@@ -78,7 +79,7 @@ export function SlotEditor({
         })}
       </div>
 
-      {acceptsStatements && (
+      {showsSuggestions && (
         <div className="slot__suggestions">
           <h4>{t("application.suggestions")}</h4>
           {openSuggestions.length === 0 && content.statementIds.length === 0 && (

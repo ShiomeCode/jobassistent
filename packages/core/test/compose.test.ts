@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { composeApplicationText, DEFAULT_TEMPLATE, findHighlightRanges, stemWord } from "../src";
+import { buildLetter, composeApplicationText, DEFAULT_TEMPLATE, findHighlightRanges, formatLetterAsText, stemWord } from "../src";
 import { SAMPLE_STATEMENTS } from "./fixtures";
 
 describe("composeApplicationText", () => {
@@ -40,5 +40,38 @@ describe("findHighlightRanges", () => {
     const ledelseStem = stemWord("ledelse");
     const ranges = findHighlightRanges(text, new Set([ledelseStem]), new Set([ledelseStem]));
     expect(ranges.map(range => text.slice(range.start, range.end))).toEqual(["personaleledelse"]);
+  });
+});
+
+describe("buildLetter and formatLetterAsText", () => {
+  const paragraphs = ["Jeg søger stillingen.", "Jeg har erfaring med React."];
+
+  it("puts sender, date, heading, body and signature in order", () => {
+    const letter = buildLetter({
+      profile: { name: "René Hansen", email: "rene@example.com", phone: " ", address: "Vejen 1, 8000 Aarhus" },
+      heading: " Ansøgning: Frontendudvikler ",
+      paragraphs,
+      dateLine: "11. november 2026",
+      signOff: "Med venlig hilsen",
+    });
+
+    expect(letter.senderLines).toEqual(["René Hansen", "Vejen 1, 8000 Aarhus", "rene@example.com"]);
+    expect(formatLetterAsText(letter)).toBe(
+      [
+        "René Hansen\nVejen 1, 8000 Aarhus\nrene@example.com",
+        "11. november 2026",
+        "Ansøgning: Frontendudvikler",
+        "Jeg søger stillingen.",
+        "Jeg har erfaring med React.",
+        "Med venlig hilsen\nRené Hansen",
+      ].join("\n\n"),
+    );
+  });
+
+  it("works without a profile", () => {
+    const letter = buildLetter({ heading: "", paragraphs, dateLine: "1. maj 2026", signOff: "Med venlig hilsen" });
+    expect(formatLetterAsText(letter)).toBe(
+      ["1. maj 2026", "Jeg søger stillingen.", "Jeg har erfaring med React.", "Med venlig hilsen"].join("\n\n"),
+    );
   });
 });

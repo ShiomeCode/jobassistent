@@ -1,6 +1,6 @@
 // Export and import of the user's statement bank as a JSON backup file.
 
-import type { Application, Experience, ExperienceKind, Statement, StatementType } from "./types";
+import type { Application, Experience, ExperienceKind, Profile, Statement, StatementType } from "./types";
 
 export const BANK_EXPORT_FORMAT = "jobassistent-bank";
 export const BANK_EXPORT_VERSION = 1;
@@ -9,6 +9,8 @@ export interface BankData {
   experiences: Experience[];
   statements: Statement[];
   applications: Application[];
+  /** Optional, so backups made before contact details existed still load. */
+  profile?: Profile;
 }
 
 export interface BankExport extends BankData {
@@ -63,6 +65,16 @@ function isStatement(value: unknown): value is Statement {
   );
 }
 
+function isProfile(value: unknown): value is Profile {
+  return (
+    isRecord(value) &&
+    isString(value.name) &&
+    isOptionalString(value.email) &&
+    isOptionalString(value.phone) &&
+    isOptionalString(value.address)
+  );
+}
+
 function isApplication(value: unknown): value is Application {
   return (
     isRecord(value) &&
@@ -94,5 +106,12 @@ export function parseBankExport(input: unknown): ParseResult<BankData> {
   if (!Array.isArray(applications) || !applications.every(isApplication)) {
     return { isValid: false, error: "invalidApplications" };
   }
-  return { isValid: true, value: { experiences, statements, applications } };
+  if (input.profile !== undefined && !isProfile(input.profile)) {
+    return { isValid: false, error: "invalidProfile" };
+  }
+  const value: BankData = { experiences, statements, applications };
+  if (input.profile !== undefined) {
+    value.profile = input.profile;
+  }
+  return { isValid: true, value };
 }

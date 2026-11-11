@@ -25,3 +25,18 @@ describe("bank export and import", () => {
     expect(parseBankExport(exported)).toEqual({ isValid: false, error: "invalidStatements" });
   });
 });
+
+describe("profile in backups", () => {
+  const data = { experiences: [], statements: [], applications: [] };
+
+  it("keeps the profile when present", () => {
+    const profile = { name: "René", email: "rene@example.com" };
+    const result = parseBankExport(JSON.parse(JSON.stringify(createBankExport({ ...data, profile }))));
+    expect(result).toEqual({ isValid: true, value: { ...data, profile } });
+  });
+
+  it("rejects a broken profile", () => {
+    const exported = { ...createBankExport(data), profile: { email: "no name" } };
+    expect(parseBankExport(exported)).toEqual({ isValid: false, error: "invalidProfile" });
+  });
+});

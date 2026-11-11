@@ -12,6 +12,7 @@ Write targeted job applications from your own sentences, without AI costs. Every
 2. **Paste a job posting.** The app splits it into requirements, finds the competences it asks for and highlights the words that match your bank.
 3. **Compose the application.** For each part of the letter you get ranked suggestions from your bank and an explanation of why they match. You write the opening and motivation yourself.
 4. **See your coverage.** The app shows which requirements your bank covers and which ones are missing.
+5. **Save and export.** Save applications to reopen them later, and download them as a Word file, print or save as PDF, or copy the text into a job portal.
 
 ## Why no AI?
 
@@ -38,8 +39,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for project structure and code convention
 
 - [x] Statement bank with local storage, export and import
 - [x] Posting analysis with synonym matching, highlights and coverage
-- [ ] Export as DOCX and PDF
-- [ ] Save applications and learn from your edits
+- [x] Export as Word (DOCX), print/PDF and plain text, with your contact details
+- [x] Save and reopen applications
+- [ ] Learn from your edits
 - [ ] Import an existing CV
 - [ ] Optional semantic matching with a small embedding model running in the browser
 
