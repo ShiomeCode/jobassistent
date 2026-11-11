@@ -2,6 +2,7 @@
 
 import { getCompetenceLabel, type ApplicationSlotContent, type Statement, type Suggestion, type TemplateSlot } from "@jobassistent/core";
 import { competenceIndex } from "../competenceIndex";
+import { ChosenStatement } from "./ChosenStatement";
 import { t, tDynamic } from "../texts";
 
 interface SlotEditorProps {
@@ -12,6 +13,9 @@ interface SlotEditorProps {
   onAddStatement: (statementId: string) => void;
   onRemoveStatement: (statementId: string) => void;
   onFreeTextChange: (freeText: string) => void;
+  onEditStatement: (statementId: string, text: string | undefined) => void;
+  onUpdateStatementInBank: (statementId: string, text: string) => void;
+  onSaveStatementAsNew: (statementId: string, text: string) => void;
 }
 
 function describeMatch(suggestion: Suggestion): string {
@@ -34,6 +38,9 @@ export function SlotEditor({
   onAddStatement,
   onRemoveStatement,
   onFreeTextChange,
+  onEditStatement,
+  onUpdateStatementInBank,
+  onSaveStatementAsNew,
 }: SlotEditorProps) {
   const headingId = `slot-${slot.id}-heading`;
   const openSuggestions = suggestions.filter(suggestion => !content.statementIds.includes(suggestion.statementId));
@@ -64,17 +71,15 @@ export function SlotEditor({
             return null;
           }
           return (
-            <div key={statementId} className="slot__chosen">
-              <p>{statement.text}</p>
-              <button
-                type="button"
-                className="button button--quiet button--small"
-                aria-label={`${t("application.remove")}: ${statement.text}`}
-                onClick={() => onRemoveStatement(statementId)}
-              >
-                {t("application.remove")}
-              </button>
-            </div>
+            <ChosenStatement
+              key={statementId}
+              statement={statement}
+              editedText={content.editedTexts?.[statementId]}
+              onRemove={() => onRemoveStatement(statementId)}
+              onEdit={text => onEditStatement(statementId, text)}
+              onUpdateInBank={text => onUpdateStatementInBank(statementId, text)}
+              onSaveAsNew={text => onSaveStatementAsNew(statementId, text)}
+            />
           );
         })}
       </div>

@@ -2,6 +2,19 @@
 
 import type { ApplicationSlotContent, Profile, Statement, Template } from "./types";
 
+/** The statement's text as used in this application: the user's edit if there is one, otherwise the bank text. */
+export function getStatementTextForApplication(
+  statementId: string,
+  content: ApplicationSlotContent,
+  statementsById: ReadonlyMap<string, Statement>,
+): string | undefined {
+  const statement = statementsById.get(statementId);
+  if (statement === undefined) {
+    return undefined;
+  }
+  return content.editedTexts?.[statementId] ?? statement.text;
+}
+
 /**
  * Builds one paragraph per slot, in template order.
  * Within a slot the free text comes first, followed by the chosen statements.
@@ -20,7 +33,7 @@ export function composeApplicationParagraphs(
       return "";
     }
     const statementTexts = content.statementIds
-      .map(statementId => statementsById.get(statementId)?.text.trim())
+      .map(statementId => getStatementTextForApplication(statementId, content, statementsById)?.trim())
       .filter((text): text is string => text !== undefined && text.length > 0);
     return [content.freeText?.trim() ?? "", ...statementTexts].filter(part => part.length > 0).join(" ");
   });

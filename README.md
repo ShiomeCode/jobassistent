@@ -8,9 +8,9 @@ Write targeted job applications from your own sentences, without AI costs. Every
 
 ## How it works
 
-1. **Build your statement bank.** Write short sentences about what you have done and can do: results, skills, how you work and what motivates you.
-2. **Paste a job posting.** The app splits it into requirements, finds the competences it asks for and highlights the words that match your bank.
-3. **Compose the application.** For each part of the letter you get ranked suggestions from your bank and an explanation of why they match. You write the opening and motivation yourself.
+1. **Build your statement bank.** Write short sentences about what you have done and can do: results, skills, how you work and what motivates you. You can also import sentences from your CV (PDF, Word or text) and review them before they are added.
+2. **Paste or load a job posting** (text or PDF). The app splits it into requirements, finds the competences it asks for and highlights the words that match your bank.
+3. **Compose the application.** For each part of the letter you get ranked suggestions from your bank and an explanation of why they match. You write the opening and motivation yourself, and can adjust any sentence for this application, then save the improvement back to your bank.
 4. **See your coverage.** The app shows which requirements your bank covers and which ones are missing.
 5. **Save and export.** Save applications to reopen them later, and download them as a Word file, print or save as PDF, or copy the text into a job portal.
 
@@ -41,8 +41,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md) for project structure and code convention
 - [x] Posting analysis with synonym matching, highlights and coverage
 - [x] Export as Word (DOCX), print/PDF and plain text, with your contact details
 - [x] Save and reopen applications
-- [ ] Learn from your edits
-- [ ] Import an existing CV
+- [x] Learn from your edits: save improved sentences back to the bank
+- [x] Import sentences from an existing CV (PDF, Word, text)
+- [x] Load job postings from PDF
 - [ ] Optional semantic matching with a small embedding model running in the browser
 
 ## License

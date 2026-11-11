@@ -75,3 +75,14 @@ describe("buildLetter and formatLetterAsText", () => {
     );
   });
 });
+
+describe("edited statement texts", () => {
+  it("uses the application's own version of a statement when it was edited", () => {
+    const text = composeApplicationText(
+      DEFAULT_TEMPLATE,
+      { evidence: { statementIds: ["react", "stakeholders"], editedTexts: { react: "Min egen version." } } },
+      SAMPLE_STATEMENTS,
+    );
+    expect(text).toBe(`Min egen version. ${SAMPLE_STATEMENTS[1]!.text}`);
+  });
+});

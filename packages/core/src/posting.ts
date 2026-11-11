@@ -10,8 +10,10 @@ const SECTION_KEYWORDS: ReadonlyArray<[PostingSection, readonly string[]]> = [
   ["tasks", ["opgaver", "arbejdsopgaver", "jobbet", "stillingen", "ansvarsområder", "ansvar", "du kommer til", "hverdag", "responsibilities", "the role"]],
 ];
 
-const BULLET_PATTERN = /^\s*(?:[-•*–·▪◦]|\d+[.)])\s+/;
-const SENTENCE_SPLIT_PATTERN = /(?<=[.!?])\s+(?=[A-ZÆØÅ0-9])/;
+/** Matches the bullet at the start of a list line: "- ", "• ", "1. " and similar. */
+export const BULLET_PATTERN = /^\s*(?:[-•*–·▪◦]|\d+[.)])\s+/;
+/** Splits between sentences: after . ! or ? when the next word starts with a capital letter or digit. */
+export const SENTENCE_SPLIT_PATTERN = /(?<=[.!?])\s+(?=[A-ZÆØÅ0-9])/;
 const MAX_HEADING_LENGTH = 80;
 const MAX_HEADING_WORDS_WITHOUT_COLON = 5;
 

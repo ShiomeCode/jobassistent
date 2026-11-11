@@ -10,6 +10,11 @@ const NAV_ITEMS: { route: Route; labelKey: TextKey }[] = [
   { route: "backup", labelKey: "nav.backup" },
 ];
 
+/** Sub-pages highlight the menu item they belong to. */
+function getNavRoute(route: Route): Route {
+  return route === "import" ? "bank" : route;
+}
+
 interface AppHeaderProps {
   currentRoute: Route;
 }
@@ -26,7 +31,7 @@ export function AppHeader({ currentRoute }: AppHeaderProps) {
           <ul className="app-header__nav">
             {NAV_ITEMS.map(item => (
               <li key={item.route}>
-                <a href={getRouteHref(item.route)} aria-current={item.route === currentRoute ? "page" : undefined}>
+                <a href={getRouteHref(item.route)} aria-current={item.route === getNavRoute(currentRoute) ? "page" : undefined}>
                   {t(item.labelKey)}
                 </a>
               </li>

@@ -775,18 +775,54 @@ fieldset {
   border-bottom: 2px solid var(--accent);
 }
 
-.slot__chosen {
+.chosen-statement {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.chosen-statement__row {
   display: flex;
   gap: var(--space-2);
   align-items: baseline;
 }
 
-.slot__chosen p {
+.chosen-statement__row p {
   flex: 1;
 }
 
-.slot__chosen .button {
+.chosen-statement .button {
   font-family: var(--font-ui);
+}
+
+.chosen-statement__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  flex-shrink: 0;
+}
+
+/* An edited statement is underlined with the marker colour, so it is clear it differs from the bank. */
+.chosen-statement.is-edited .chosen-statement__row p {
+  text-decoration: underline;
+  text-decoration-color: var(--marker);
+  text-decoration-thickness: 3px;
+  text-underline-offset: 4px;
+}
+
+.chosen-statement__learn {
+  display: grid;
+  gap: var(--space-2);
+  padding: var(--space-3);
+  border-left: 3px solid var(--marker);
+  background: color-mix(in srgb, var(--marker) 12%, white);
+  font-family: var(--font-ui);
+  font-size: 0.875rem;
+}
+
+.chosen-statement__editor {
+  font-family: var(--font-letter);
+  font-size: 1.0625rem;
+  line-height: 1.7;
 }
 
 .slot__suggestions {
@@ -1128,4 +1164,135 @@ input[type="tel"] {
     margin-top: 1.6em;
     break-inside: avoid;
   }
+}
+
+/* File picker */
+
+.file-text-button {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+}
+
+.file-text-button .field__error {
+  flex-basis: 100%;
+}
+
+a.button {
+  display: inline-block;
+  text-decoration: none;
+}
+
+/* CV import */
+
+.import-page__source {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 48rem;
+}
+
+.import-page__source > .button {
+  justify-self: start;
+}
+
+.import-page__done {
+  margin-bottom: var(--space-5);
+  max-width: 48rem;
+}
+
+.import-review {
+  display: grid;
+  gap: var(--space-4);
+  max-width: 56rem;
+}
+
+.import-review__header {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.import-review__file {
+  margin-left: var(--space-3);
+  font-weight: 400;
+  font-size: 0.875rem;
+  color: var(--ink-soft);
+}
+
+.import-review__bulk {
+  display: flex;
+  gap: var(--space-2);
+  margin-left: calc(-1 * var(--space-3));
+}
+
+.import-review__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.review-item {
+  display: flex;
+  gap: var(--space-3);
+  align-items: flex-start;
+  padding: var(--space-3) var(--space-4);
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--line-strong);
+  border-radius: var(--radius-card);
+  opacity: 0.7;
+}
+
+.review-item.is-selected {
+  border-left-color: var(--type-color);
+  opacity: 1;
+}
+
+.review-item__check {
+  width: 1.15rem;
+  height: 1.15rem;
+  margin-top: 0.55rem;
+  accent-color: var(--accent);
+  flex-shrink: 0;
+}
+
+.review-item__body {
+  flex: 1;
+  display: grid;
+  gap: var(--space-2);
+}
+
+.review-item__text {
+  font-family: var(--font-letter);
+}
+
+.review-item__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.review-item__meta select {
+  width: auto;
+  font-size: 0.875rem;
+  padding: var(--space-1) var(--space-2);
+}
+
+.review-item__duplicate {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--ink-soft);
+}
+
+.import-review__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  position: sticky;
+  bottom: 0;
+  padding: var(--space-3) 0;
+  background: var(--paper);
 }

@@ -8,6 +8,7 @@ import { StatementCard } from "../components/StatementCard";
 import { StatementForm } from "../components/StatementForm";
 import { ExperienceList } from "../components/ExperienceList";
 import { ProfileForm } from "../components/ProfileForm";
+import { getRouteHref } from "../hooks/useHashRoute";
 import { t, tDynamic } from "../texts";
 
 const TYPE_ORDER: StatementType[] = ["result", "skill", "personality", "motivation"];
@@ -44,6 +45,9 @@ export function BankPage() {
               <button type="button" className="button button--primary" onClick={() => setFormState({ mode: "new" })}>
                 {t("bank.addStatement")}
               </button>
+              <a className="button button--secondary" href={getRouteHref("import")}>
+                {t("bank.importCv")}
+              </a>
               {statements.length > 0 && <span className="muted">{t("bank.statementCount", { count: statements.length })}</span>}
             </div>
           ) : (

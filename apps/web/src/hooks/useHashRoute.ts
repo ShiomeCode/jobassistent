@@ -1,11 +1,12 @@
-// Minimal hash routing (#bank, #ansoegning, #ansoegninger, #backup) so reloading keeps the current page.
+// Minimal hash routing (#bank, #import, #ansoegning, #ansoegninger, #backup) so reloading keeps the current page.
 
 import { useEffect, useState } from "react";
 
-export type Route = "bank" | "application" | "applications" | "backup";
+export type Route = "bank" | "import" | "application" | "applications" | "backup";
 
 const HASH_BY_ROUTE: Record<Route, string> = {
   bank: "#bank",
+  import: "#import",
   application: "#ansoegning",
   applications: "#ansoegninger",
   backup: "#backup",

@@ -4,6 +4,7 @@ import { useState } from "react";
 import type { MatchingResult } from "../hooks/useMatching";
 import { HighlightedText } from "./HighlightedText";
 import { CoverageList } from "./CoverageList";
+import { FileTextButton } from "./FileTextButton";
 import { t } from "../texts";
 
 interface PostingPanelProps {
@@ -57,6 +58,7 @@ export function PostingPanel({
           <p className="field__hint" id="posting-hint">
             {t("application.postingHint")}
           </p>
+          <FileTextButton labelKey="application.loadPostingFile" onTextLoaded={text => onPostingTextChange(text)} />
           <textarea
             className="posting-panel__input"
             rows={14}

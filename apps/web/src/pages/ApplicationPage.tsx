@@ -9,7 +9,7 @@ import type { ApplicationDraft } from "../hooks/useApplicationDraft";
 import { PostingPanel } from "../components/PostingPanel";
 import { SlotEditor } from "../components/SlotEditor";
 import { PrintableLetter } from "../components/PrintableLetter";
-import { createId, markStatementsAsUsed, saveApplication } from "../db";
+import { createId, markStatementsAsUsed, saveApplication, saveStatement } from "../db";
 import { createFileSlug, downloadFile, getDateStamp } from "../utils/download";
 import { exportLetterAsDocx } from "../utils/exportDocx";
 import { getRouteHref } from "../hooks/useHashRoute";
@@ -54,6 +54,27 @@ export function ApplicationPage({ draft }: ApplicationPageProps) {
   const showStatus = (status: ActionStatus) => {
     setActionStatus(status);
     window.setTimeout(() => setActionStatus("idle"), STATUS_MESSAGE_DURATION_MS);
+  };
+
+  /** Overwrites the statement in the bank with the edited text. Other applications using it will change too. */
+  const handleUpdateStatementInBank = async (slotId: string, statementId: string, text: string) => {
+    const statement = statementsById.get(statementId);
+    if (!statement) {
+      return;
+    }
+    await saveStatement({ ...statement, text });
+    draft.setStatementEdit(slotId, statementId, undefined);
+  };
+
+  /** Keeps the original and adds the edited text as a new statement of the same type, then uses the new one here. */
+  const handleSaveStatementAsNew = async (slotId: string, statementId: string, text: string) => {
+    const statement = statementsById.get(statementId);
+    if (!statement) {
+      return;
+    }
+    const newStatement = { ...statement, id: createId(), text, shortText: undefined, lastUsed: undefined };
+    await saveStatement(newStatement);
+    draft.replaceStatementInSlot(slotId, statementId, newStatement.id);
   };
 
   const handleFindMatches = () => {
@@ -158,6 +179,9 @@ export function ApplicationPage({ draft }: ApplicationPageProps) {
                   onAddStatement={statementId => draft.addStatementToSlot(slot.id, statementId)}
                   onRemoveStatement={statementId => draft.removeStatementFromSlot(slot.id, statementId)}
                   onFreeTextChange={freeText => draft.setSlotFreeText(slot.id, freeText)}
+                  onEditStatement={(statementId, text) => draft.setStatementEdit(slot.id, statementId, text)}
+                  onUpdateStatementInBank={(statementId, text) => handleUpdateStatementInBank(slot.id, statementId, text)}
+                  onSaveStatementAsNew={(statementId, text) => handleSaveStatementAsNew(slot.id, statementId, text)}
                 />
               ))}
 

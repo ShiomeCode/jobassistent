@@ -22,6 +22,10 @@ export interface ApplicationDraft {
   addStatementToSlot: (slotId: string, statementId: string) => void;
   removeStatementFromSlot: (slotId: string, statementId: string) => void;
   setSlotFreeText: (slotId: string, freeText: string) => void;
+  /** Sets this application's own version of a statement. Pass undefined to go back to the bank text. */
+  setStatementEdit: (slotId: string, statementId: string, text: string | undefined) => void;
+  /** Swaps one statement for another in a slot, e.g. after an edit was saved as a new statement. */
+  replaceStatementInSlot: (slotId: string, oldStatementId: string, newStatementId: string) => void;
   /** Builds the application to store, with a new id if the draft has never been saved. */
   toApplication: (createId: () => string, now?: Date) => Application;
   markSaved: (application: Application) => void;
@@ -31,6 +35,15 @@ export interface ApplicationDraft {
 
 function createEmptySlotContents(template: Template): Record<string, ApplicationSlotContent> {
   return Object.fromEntries(template.slots.map(slot => [slot.id, { statementIds: [], freeText: "" }]));
+}
+
+/** Returns a copy of the record without the key, or undefined when nothing is left. */
+function withoutKey(record: Record<string, string> | undefined, keyToRemove: string): Record<string, string> | undefined {
+  if (record === undefined) {
+    return undefined;
+  }
+  const remainingEntries = Object.entries(record).filter(([key]) => key !== keyToRemove);
+  return remainingEntries.length > 0 ? Object.fromEntries(remainingEntries) : undefined;
 }
 
 /** What counts as "the content" when deciding if there are unsaved changes. */
@@ -77,6 +90,29 @@ export function useApplicationDraft(template: Template = DEFAULT_TEMPLATE): Appl
       updateSlot(slotId, content => ({
         ...content,
         statementIds: content.statementIds.filter(existingId => existingId !== statementId),
+        editedTexts: withoutKey(content.editedTexts, statementId),
+      }));
+    },
+    [updateSlot],
+  );
+
+  const setStatementEdit = useCallback(
+    (slotId: string, statementId: string, text: string | undefined) => {
+      updateSlot(slotId, content => ({
+        ...content,
+        editedTexts:
+          text === undefined ? withoutKey(content.editedTexts, statementId) : { ...content.editedTexts, [statementId]: text },
+      }));
+    },
+    [updateSlot],
+  );
+
+  const replaceStatementInSlot = useCallback(
+    (slotId: string, oldStatementId: string, newStatementId: string) => {
+      updateSlot(slotId, content => ({
+        ...content,
+        statementIds: content.statementIds.map(statementId => (statementId === oldStatementId ? newStatementId : statementId)),
+        editedTexts: withoutKey(content.editedTexts, oldStatementId),
       }));
     },
     [updateSlot],
@@ -145,6 +181,8 @@ export function useApplicationDraft(template: Template = DEFAULT_TEMPLATE): Appl
     addStatementToSlot,
     removeStatementFromSlot,
     setSlotFreeText,
+    setStatementEdit,
+    replaceStatementInSlot,
     toApplication,
     markSaved,
     loadApplication,

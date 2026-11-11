@@ -63,6 +63,8 @@ export interface Template {
 export interface ApplicationSlotContent {
   statementIds: string[];
   freeText?: string;
+  /** Text the user changed for this application only, by statement id. The bank keeps the original. */
+  editedTexts?: Record<string, string>;
 }
 
 export interface Application {

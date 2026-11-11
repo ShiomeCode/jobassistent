@@ -7,3 +7,4 @@ export * from "./matching";
 export * from "./templates";
 export * from "./bank";
 export * from "./compose";
+export * from "./cv";

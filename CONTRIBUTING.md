@@ -70,7 +70,8 @@ The matching is only as good as `packages/core/data/competences.da.json`. Each e
 { "id": "collaboration", "label": "Samarbejde", "terms": ["samarbejde", "teamwork", "teamspiller"] }
 ```
 
-- Write terms in their basic form. Inflections are handled by the stemmer.
+- Write terms in their basic form. Most inflections are handled by the stemmer.
+- Also add past-tense verbs (e.g. "oplærte", "koordinerede"). CVs are usually written in the past tense, and the stemmer does not connect "oplærte" with "oplære".
 - Multi-word terms match when all the words appear in the same sentence.
 - Avoid very general words that would cause false matches (e.g. "udvikling", which also means personal development).
 - Add a test in `packages/core/test/posting.test.ts` when you add a tricky synonym.
