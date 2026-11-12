@@ -4,9 +4,16 @@ on:
   push:
     branches: [main]
   pull_request:
+  # Lets you start a run by hand from the Actions tab ("Run workflow").
+  workflow_dispatch:
 
 permissions:
   contents: read
+
+# Only one run per branch at a time. A newer push cancels an older run that is still going.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
@@ -22,13 +29,13 @@ jobs:
       - run: npm test
       - run: npm run build
       - uses: actions/upload-pages-artifact@v3
-        if: github.ref == 'refs/heads/main'
+        if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
         with:
           path: apps/web/dist
 
   deploy:
     # Publishes the app to GitHub Pages. Enable Pages with source "GitHub Actions" in the repo settings.
-    if: github.ref == 'refs/heads/main'
+    if: github.ref == 'refs/heads/main' && github.event_name != 'pull_request'
     needs: test
     runs-on: ubuntu-latest
     permissions:
